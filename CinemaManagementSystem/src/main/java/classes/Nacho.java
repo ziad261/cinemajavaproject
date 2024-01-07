@@ -18,7 +18,7 @@ import java.util.ArrayList;
  *
  * @author Ali
  */
-public class Nacho extends Snack implements Serializable, IBuySnack {
+public class Nacho extends Snack implements Serializable {
     private static final long serialVersionUID = 3570081285649915464L;
     
     private boolean withCheese;

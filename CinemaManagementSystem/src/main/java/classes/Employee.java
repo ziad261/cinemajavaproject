@@ -1,6 +1,7 @@
 package classes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Employee extends User{
     public static final long serialVersionUID = -4350323773326372865L;
@@ -18,33 +19,24 @@ public class Employee extends User{
     }
 
     public Employee Login(){
-        ArrayList<User> usersList = User.readUsersFromFile("employees.dat");
-        for (User user : usersList)
-        {
-            if (user.username.equals(this.username))
-            {
-                if (user.password.equals(this.password))
-                {
-                    return new Employee(user);
-                }
-                System.out.println("Incorrect Credentials!");
-                return null;
-            }
-        }
+
+        if(Global.Users.containsKey(username))
+            if(Global.Users.get(username).password.equals(password))
+                return  new Employee(Global.Users.get(username));
+
         return null;
     }
 
     public boolean Register(){
-        ArrayList<User> customersList = User.readUsersFromFile("employees.dat");
-        if (!User.isUsernameTaken(customersList, this.username)){
-            customersList.add(this);
-            User.writeUserToFile(customersList, "employees.dat");
+
+        if (!Global.Users.containsKey(username))
+        {
+            Global.Users.put(username,this);
+            User.writeUserToFile("employees.dat");
             return true;
         }
-        else{
-            System.out.println("Customer already exists!");
-            return false;
-        }
+
+        return false;
     }
     
     public boolean AddGenre(Genre genre){

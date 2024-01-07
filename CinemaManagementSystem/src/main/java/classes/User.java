@@ -4,6 +4,8 @@ import java.io.*;
 
 import java.awt.List;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class User implements Serializable {
@@ -57,36 +59,33 @@ public class User implements Serializable {
         return email;
     }
 
-    protected static boolean isUsernameTaken(ArrayList<User> customersList, String username) {
-        for (User user : customersList) {
-            if (user.username.equals(username)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected static ArrayList<User> readUsersFromFile(String path) {
-        ArrayList<User> userList = new ArrayList<User>();
+    public static void readUsersFromFile(String path) {
 
         File file = new File(path);
 
         if (file.length() == 0) {
             // File is empty, return an empty list
-            return userList;
+            return;
         }
 
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
-            userList = (ArrayList<User>) ois.readObject();
-        } catch (FileNotFoundException e) {
+            ArrayList<User> list = (ArrayList<User>) ois.readObject();
+
+            for(User user : list)
+            {
+                Global.Users.put(user.username, user);
+            }
+
+        }
+        catch (FileNotFoundException e) {
             // Ignore if the file doesn't exist yet
-        } catch (IOException | ClassNotFoundException e) {
+        }
+        catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return userList;
     }
 
-    protected static boolean writeUserToFile(ArrayList<User> userList, String path) {
+    protected static boolean writeUserToFile(String path) {
         try {
             File file = new File(path);
 
@@ -96,7 +95,12 @@ public class User implements Serializable {
             }
 
             try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
-                oos.writeObject(userList);
+                ArrayList<User> users=new ArrayList<User>();
+                for(Map.Entry<String,User> i :Global.Users.entrySet())
+                {
+                    users.add(i.getValue());
+                }
+                oos.writeObject(users);
                 return true;
             }
         } catch (IOException e) {

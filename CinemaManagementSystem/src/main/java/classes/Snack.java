@@ -10,7 +10,7 @@ import java.io.Serializable;
  *
  * @author Ali
  */
-public class Snack implements Serializable {
+public abstract class Snack implements Serializable {
     private static final long serialVersionUID = 3570081285649915464L;
     
     private String name;
@@ -50,4 +50,6 @@ public class Snack implements Serializable {
     public void setCustomer(Customer customer){
         this.customer = customer;
     }
+
+    public abstract boolean Buy();
 }

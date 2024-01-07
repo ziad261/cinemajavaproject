@@ -1,6 +1,7 @@
 package classes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Customer extends User {
     public static final long serialVersionUID = 4573431032693225828L;
@@ -18,33 +19,24 @@ public class Customer extends User {
     }
 
     public Customer Login(){
-        ArrayList<User> usersList = User.readUsersFromFile("customers.dat");
-        for (User user : usersList)
-        {
-            if (user.username.equals(this.username))
-            {
-                if (user.password.equals(this.password))
-                {
-                    return new Customer(user);
-                }
-                System.out.println("Incorrect Credentials!");
-                return null;
-            }
-        }
+
+        if(Global.Users.containsKey(username))
+            if(Global.Users.get(username).password.equals(password))
+                return  new Customer(Global.Users.get(username));
+
         return null;
     }
 
     public boolean Register(){
-        ArrayList<User> customersList = User.readUsersFromFile("customers.dat");
-        if (!User.isUsernameTaken(customersList, this.username)){
-            customersList.add(this);
-            User.writeUserToFile(customersList, "customers.dat");
+
+        if (!Global.Users.containsKey(username))
+        {
+            Global.Users.put(username,this);
+            User.writeUserToFile("customers.dat");
             return true;
         }
-        else{
-            System.out.println("Customer already exists!");
-            return false;
-        }
+
+        return false;
     }
     
     public boolean BuyTicket(Ticket ticket){
